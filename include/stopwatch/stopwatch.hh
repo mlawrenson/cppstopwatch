@@ -18,15 +18,12 @@ along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <chrono>
 #include <iostream>
 #include <map>
 #include <ctime>
 #include <sstream>
 
-#ifndef WIN32
-	/* The classes below are exported */
-	#pragma GCC visibility push(default)
-#endif
 
 // Generic stopwatch exception class
 struct StopwatchException {
@@ -233,7 +230,3 @@ protected:
 	/** Flag to hold the clock's status */
 	bool active;
 };
-
-#ifndef WIN32
-	#pragma GCC visibility pop
-#endif

@@ -17,13 +17,6 @@ along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stopwatch/stopwatch.hh"
 
-#ifndef WIN32
-	#include <sys/time.h>
-#else
-	#include <Windows.h>
-	#include <iomanip>
-#endif
-
 
 using std::map;
 using std::string;
@@ -53,35 +46,13 @@ long double Stopwatch::take_time() {
 		return clock();
 		
 	} else if ( mode == REAL_TIME ) {
-		
-		// Query operating system
-		
-#ifdef WIN32
-		/*	In case of usage under Windows */
-		FILETIME ft;
-		LARGE_INTEGER intervals;
 
-		// Get the amount of 100 nanoseconds intervals elapsed since January 1, 1601 (UTC)
-		GetSystemTimeAsFileTime(&ft);
-		intervals.LowPart = ft.dwLowDateTime;
-		intervals.HighPart = ft.dwHighDateTime;
+		// Use chrono
+    auto timenow = std::chrono::system_clock::now();
+    // Get time since epoch in nano seconds
+    long long tse_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(timenow.time_since_epoch()).count();
 
-		long double measure = intervals.QuadPart;
-		measure -= 116444736000000000.0;			// Convert to UNIX epoch time
-		measure /= 10000000.0;						// Convert to seconds
-
-		return measure;
-#else
-		/* Linux, MacOS, ... */
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-
-		long double measure = tv.tv_usec;
-		measure /= 1000000.0;						// Convert to seconds
-		measure += tv.tv_sec;						// Add seconds part
-
-		return measure;
-#endif
+		return tse_nano / 1e9;
 
 	} else {
 		// If mode == NONE, clock has not been initialized, then throw exception
@@ -122,16 +93,20 @@ void Stopwatch::stop(string perf_name) {
 	
 	perf_info.stops++;
 	long double  lapse = clock_end - perf_info.clock_start;
-	
+
+  // Last time is 0 unless clock was paused, so lapse is actually last_time+lapse in that case
+  long double unpaused_lapse = perf_info.last_time + lapse;
+
+
 	if ( mode == CPU_TIME )
 		lapse /= (double) CLOCKS_PER_SEC;
 	
 	// Update last time
-	perf_info.last_time = lapse;
+	perf_info.last_time = unpaused_lapse;
 
 	// Update min/max time
-	if ( lapse >= perf_info.max_time )	perf_info.max_time = lapse;
-	if ( lapse <= perf_info.min_time || perf_info.min_time == 0 )	perf_info.min_time = lapse;
+	if ( unpaused_lapse >= perf_info.max_time )	perf_info.max_time = unpaused_lapse;
+	if ( unpaused_lapse <= perf_info.min_time || perf_info.min_time == 0 )	perf_info.min_time = unpaused_lapse;
 	
 	// Update total time
 	perf_info.total_time += lapse;
@@ -141,7 +116,7 @@ void Stopwatch::pause(string perf_name) {
 	
 	if (!active) return;
 	
-	long double  clock_end = clock();
+	long double  clock_end = take_time();
 	
 	// Try to recover performance data
 	if ( !performance_exists(perf_name)  )
@@ -154,6 +129,7 @@ void Stopwatch::pause(string perf_name) {
 	// Update total time
 	perf_info.last_time += lapse;
 	perf_info.total_time += lapse;
+  perf_info.paused = true;
 }
 
 void Stopwatch::reset_all() {
