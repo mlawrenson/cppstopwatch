@@ -19,9 +19,17 @@ int main(int argc, char** argv)
   swatch.stop("1sec");
 
   for (int i = 0; i < 10; i++) {
+    swatch.start("10x0.05s");
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    swatch.pause("10x0.05s");
+
     swatch.start("10x0.1s");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     swatch.stop("10x0.1s");
+
+    swatch.start("10x0.05s");
+    std::this_thread::sleep_for(std::chrono::milliseconds(40));
+    swatch.stop("10x0.05s");
   }
 
   swatch.start("2sec");
