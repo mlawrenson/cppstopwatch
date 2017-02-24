@@ -1,0 +1,2 @@
+add_executable(stopwatch_test test.cc)
+target_link_libraries(stopwatch_test stopwatch)
