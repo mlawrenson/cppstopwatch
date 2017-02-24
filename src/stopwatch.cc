@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Stdafx.h"
+#include "stopwatch/stopwatch.hh"
 
 #ifndef WIN32
 	#include <sys/time.h>
@@ -24,7 +24,6 @@ along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 	#include <iomanip>
 #endif
 
-#include "Stopwatch.h"
 
 using std::map;
 using std::string;

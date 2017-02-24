@@ -1,1 +1,7 @@
 .svn
+.idea
+lib
+bin
+cmake-build*
+build
+bin

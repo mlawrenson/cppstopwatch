@@ -16,10 +16,12 @@ along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef STOPWATCH_H
-#define STOPWATCH_H
+#pragma once
 
-#include "Stdafx.h"
+#include <iostream>
+#include <map>
+#include <ctime>
+#include <sstream>
 
 #ifndef WIN32
 	/* The classes below are exported */
@@ -234,6 +236,4 @@ protected:
 
 #ifndef WIN32
 	#pragma GCC visibility pop
-#endif
-
 #endif
