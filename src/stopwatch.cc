@@ -22,7 +22,7 @@ using std::map;
 using std::string;
 using std::ostringstream;
 
-Stopwatch::Stopwatch() : active(true), mode(NONE)  {
+Stopwatch::Stopwatch() : active(true)  {
 	records_of = new map<string, PerformanceData>();
 }
 
@@ -30,34 +30,17 @@ Stopwatch::~Stopwatch() {
 	delete records_of;
 }
 
-void Stopwatch::set_mode(StopwatchMode new_mode) {
-	mode = new_mode;
-}
-
 bool Stopwatch::performance_exists(string perf_name) {
 	return (records_of->find(perf_name) != records_of->end());
 }
 
 long double Stopwatch::take_time() {
-
-	if ( mode == CPU_TIME ) {
-		
-		// Use ctime
-		return clock();
-		
-	} else if ( mode == REAL_TIME ) {
-
 		// Use chrono
     auto timenow = std::chrono::system_clock::now();
     // Get time since epoch in nano seconds
     long long tse_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(timenow.time_since_epoch()).count();
 
 		return tse_nano / 1e9;
-
-	} else {
-		// If mode == NONE, clock has not been initialized, then throw exception
-		throw StopwatchException("Clock not initialized to a time taking mode!");
-	}
 }
 
 void Stopwatch::start(string perf_name)  {
@@ -96,10 +79,6 @@ void Stopwatch::stop(string perf_name) {
 
   // Last time is 0 unless clock was paused, so lapse is actually last_time+lapse in that case
   long double unpaused_lapse = perf_info.last_time + lapse;
-
-
-	if ( mode == CPU_TIME )
-		lapse /= (double) CLOCKS_PER_SEC;
 	
 	// Update last time
 	perf_info.last_time = unpaused_lapse;
@@ -195,7 +174,7 @@ void Stopwatch::report(string perf_name, std::ostream& output) {
 
 	// To support Windows (otherwise string("=", perf_name.length() + 1) would do the job
 	string bar = "";
-	for (int i = 0; i < perf_name.length(); i++)
+	for (unsigned int i = 0; i < perf_name.length(); i++)
 		bar.append("=");
 
 	output << std::endl;
@@ -221,9 +200,6 @@ long double Stopwatch::get_time_so_far(string perf_name) {
 		throw StopwatchException("Performance not initialized.");
     
     long double lapse = (take_time() - (records_of->find(perf_name)->second).clock_start);
-    
-    if (mode == CPU_TIME)
-        lapse /= (double) CLOCKS_PER_SEC;
     
 	return lapse;
 }

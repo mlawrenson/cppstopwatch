@@ -5,16 +5,6 @@ How to use this code
 
 		Stopwatch swatch();
 	
-	A Stopwatch object can be used to measure execution time of code, algorithms, etc., the Stopwatch can
-	be initialized in two time-taking modes, CPU time and real time:
-	
-	
-		watch.set_mode(REAL_TIME);
-
-	CPU time is the time spent by the processor on a certain piece of code, while real time is the real
-	amount of time taken by a certain piece of code to execute (i.e. in general if you are doing hard work
-	such as image or video editing on a different process the measured time will probably increase).
-	
 	How does it work? Basically, one wraps the code to be measured with the following method calls:
 	
 		swatch.start("My astounding algorithm");

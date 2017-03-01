@@ -8,7 +8,6 @@ int main(int argc, char** argv)
 {
   // Set up stopwatch
   Stopwatch swatch;
-  swatch.set_mode(REAL_TIME);
 
   swatch.start("2sec");
   std::this_thread::sleep_for(std::chrono::milliseconds(1500));

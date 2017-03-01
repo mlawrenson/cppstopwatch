@@ -21,7 +21,6 @@ along with Stopwatch.  If not, see <http://www.gnu.org/licenses/>.
 #include <chrono>
 #include <iostream>
 #include <map>
-#include <ctime>
 #include <sstream>
 
 
@@ -32,25 +31,11 @@ public:
 	std::string error;
 };
 
-
-enum StopwatchMode {
-	NONE		= 0,	// Clock is not initialized
-	CPU_TIME	= 1,	// Clock calculates time ranges using ctime and CLOCKS_PER_SEC
-	REAL_TIME	= 2,	// Clock calculates time by asking the operating system how much real time passed
-};
-
 /** 
 	@brief A class representing a stopwatch.
 
 		@code
 		Stopwatch swatch();
-		@endcode
-
-	The Stopwatch class can be used to measure execution time of code, algorithms, etc., the Stopwatch can
-	be initialized in two time-taking modes, CPU time and real time:
-	
-		@code
-		swatch.set_mode(REAL_TIME);
 		@endcode
 
 	CPU time is the time spent by the processor on a certain piece of code, while real time is the real
@@ -133,9 +118,6 @@ public:
 	/** Tells if a performance with a certain ID exists */
 	bool performance_exists(std::string perf_name);
 
-	/** Initialize stopwatch to use a certain time taking mode */
-	void set_mode(StopwatchMode mode);
-
 	/** Start the stopwatch related to a certain piece of code */
 	void start(std::string perf_name);
 		
@@ -172,8 +154,8 @@ public:
 	/** Return last measurement of a certain performance */
 	long double get_last_time(std::string perf_name);
     
-    /** Return the time since the start of the last measurement of a given performance. */
-    long double get_time_so_far(std::string perf_name);
+  /** Return the time since the start of the last measurement of a given performance. */
+  long double get_time_so_far(std::string perf_name);
 
 	/**	Turn off clock, all the Stopwatch::* methods return without doing anything after this method is called. */
 	void turn_off();
@@ -220,9 +202,6 @@ protected:
 		/** How many cycles have been this stopwatch executed? */
 		int	stops;
 	};
-
-	/** Time taking mode */
-	StopwatchMode mode;
 
 	/** Pointer to the dynamic structure which holds the collection of performance data */
 	std::map<std::string, PerformanceData >* records_of;
